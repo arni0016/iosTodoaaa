@@ -12,12 +12,12 @@ class TaskViewController: UIViewController {
 
     @IBOutlet var label: UILabel!
     
-    var task: String?
+    var task: Todo?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        label.text = task
+        label.text = task?.title
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Delete", style: .done, target: self, action: #selector(deleteTask))
         // Do any additional setup after loading the view.

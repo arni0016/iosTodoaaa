@@ -11,13 +11,29 @@ import UIKit
 class EntryViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var field: UITextField!
+    @IBOutlet var dateField: UITextField!
+    var datePicker: UIDatePicker!
+    
+    @IBAction func dateChanged(_ sender: UIDatePicker) {
+        let dateFormatter = DateFormatter()
+        print("test")
+        dateFormatter.dateStyle = DateFormatter.Style.medium
+        dateFormatter.timeStyle = DateFormatter.Style.short
+        dateField.text = dateFormatter.string(from: sender.date)
+    }
     
     var update: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         field.delegate = self
+        dateField.delegate = self
+        datePicker = UIDatePicker()
         
+        dateField.inputView = datePicker
+        
+        
+        print("tes222t")
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(saveTask))
     }
     
@@ -31,12 +47,28 @@ class EntryViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
+        guard let date = dateField.text, !date.isEmpty else {
+            return
+        }
+        
+        let task = Todo(title: text, date: date)
+        
         guard let count = UserDefaults().value(forKey: "count") as? Int else {
             return
         }
         let newCount = count + 1
         UserDefaults().set(newCount, forKey: "count")
-        UserDefaults().set(text, forKey: "task_\(newCount)")
+        
+        do {
+            let encoded = try JSONEncoder().encode(task)
+            UserDefaults().set(encoded, forKey: "task_\(newCount)")
+        }
+        catch {
+            print("lort")
+        }
+        
+        
+        
         
         update?()
         

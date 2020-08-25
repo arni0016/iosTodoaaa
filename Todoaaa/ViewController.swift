@@ -12,7 +12,7 @@ class ViewController: UIViewController {
 
     @IBOutlet var tableView: UITableView!
     
-    var tasks = [String]()
+    var tasks = [Todo]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +36,9 @@ class ViewController: UIViewController {
         }
         
         for x in 0..<count {
-            if let task = UserDefaults().value(forKey: "task_\(x+1)") as? String {
-                tasks.append(task)
+            print("decoding")
+            if let task = UserDefaults().value(forKey: "task_\(x+1)") as? Data {
+                tasks.append(try! JSONDecoder().decode(Todo.self, from: task))
             }
         }
         
@@ -75,7 +76,10 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        cell.textLabel?.text = tasks[indexPath.row]
+        
+        
+        cell.textLabel?.text = tasks[indexPath.row].title
+        cell.detailTextLabel?.text = tasks[indexPath.row].date
         
         return cell
     }
